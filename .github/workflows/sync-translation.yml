@@ -78,7 +78,7 @@ jobs:
             echo "Downloaded file from $url"
           done
 
-      - name: Detect downloaded files and move them
+      - name: Move downloaded file to the desired directory
         run: |
           echo "Listing all files in the current directory:"
           ls -la
@@ -86,24 +86,19 @@ jobs:
           # Ensure the destination directory exists
           mkdir -p src/assets/locale/
 
-          # Find the downloaded file (adjust the pattern if needed)
-          downloaded_file=$(find . -maxdepth 1 -type f -name "*.xlf")
+          # Check if the specific file exists
+          if [ -f "Aam_Digital_Italian.xlf" ]; then
+            echo "Found Aam_Digital_Italian.xlf"
 
-          if [ -n "$downloaded_file" ]; then
-            echo "Found downloaded file: $downloaded_file"
-            
-            # Extract the filename
-            filename=$(basename "$downloaded_file")
-            
-            # Check if the file already exists in the destination directory
-            if [ -f "src/assets/locale/$filename" ]; then
-              echo "File $filename already exists in src/assets/locale/. Skipping move."
+            # Check if it already exists in the destination
+            if [ -f "src/assets/locale/Aam_Digital_Italian.xlf" ]; then
+              echo "File Aam_Digital_Italian.xlf already exists in src/assets/locale/. Skipping move."
             else
-              mv "$downloaded_file" src/assets/locale/
-              echo "Moved $filename to src/assets/locale/"
+              mv "Aam_Digital_Italian.xlf" src/assets/locale/
+              echo "Moved Aam_Digital_Italian.xlf to src/assets/locale/"
             fi
           else
-            echo "No downloaded files found."
+            echo "Aam_Digital_Italian.xlf not found."
             exit 1
           fi
 

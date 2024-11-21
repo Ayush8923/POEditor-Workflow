@@ -70,7 +70,7 @@ jobs:
                 echo "Downloading translations for $lang from $url"
                 if [ -f "src/assets/locale/messages.$lang.xlf" ]; then
                   echo "File exists, removing it before downloading the new file."
-                  rm src/assets/translated/messages.$lang.xlf
+                  rm src/assets/locale/messages.$lang.xlf
                 fi
                 curl -s -o src/assets/locale/messages.$lang.xlf $url
 

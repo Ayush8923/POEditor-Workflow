@@ -43,8 +43,8 @@ jobs:
               exit 1
             fi
 
-            echo "Waiting for 2 minutes to respect rate limits..."
-            sleep 120
+            echo "Waiting for 1 minutes to respect rate limits..."
+            sleep 60
           done
 
       # Export updated translations from POEditor
@@ -72,15 +72,16 @@ jobs:
 
             curl -L $url -o src/assets/locale/messages.$lang.xlf
             echo "Downloaded messages.$lang.xlf successfully"
-            echo "Waiting for 2 minutes to respect rate limits..."
-            sleep 120
+            echo "Waiting for 1 minutes to respect rate limits..."
+            sleep 60
           done
 
       # Commit and create a new PR
       - name: Configure Git
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "Ayush8923"
+          git config user.email "ayuuniyal7@gmail.com"
+          git config user.password "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"
 
       - name: Create new branch for translations
         run: |

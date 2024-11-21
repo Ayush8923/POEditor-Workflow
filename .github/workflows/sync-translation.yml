@@ -67,14 +67,17 @@ jobs:
 
             echo "Response: $response"
             status=$(echo $response | jq -r '.response.status')
-            # Download the file from the url
+
+            # Download the file from the url if the export is successful
             if [ "$status" == "success" ]; then
               url=$(echo $response | jq -r '.result.url')
               curl -s -o src/assets/translated/messages.$lang.xlf $url
+              echo "Downloaded translations for $lang"
             else
               echo "Error exporting translations for $lang: $response"
               exit 1
             fi
+          done
 
       # Configure Git
       - name: Configure Git

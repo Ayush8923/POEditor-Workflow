@@ -13,6 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -50,10 +51,10 @@ jobs:
             sleep 60
           done
 
+      # Export translations from POEditor
       - name: Export translations from POEditor
         run: |
           # Define languages
-          # languages=("en" "fr" "de" "it")
           languages=("it")
 
           for lang in "${languages[@]}"; do
@@ -72,29 +73,39 @@ jobs:
               exit 1
             fi
 
-            # Download the file
-            filename="Aam_Digital_French.xlf"
-            curl -L "$url" -o "src/assets/locale/$filename"
-            echo "Downloaded $filename successfully"
-            sleep 60
+            # Download the file (preserve original name from URL)
+            curl -L -O "$url" 
+            echo "Downloaded file from $url"
           done
 
-      # Commit and create a new PR
+      # Step 3: Detect downloaded files
+      - name: Detect downloaded files
+        run: |
+          # Move all downloaded `.xlf` files into the desired directory
+          mkdir -p src/assets/locale/
+          mv *.xlf src/assets/locale/
+          echo "Moved downloaded files to src/assets/locale/"
+
+      # Configure Git
       - name: Configure Git
         run: |
           git config user.name "Ayush8923"
           git config user.email "ayuuniyal7@gmail.com"
           git remote set-url origin https://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@github.com/Ayush8923/POEditor-Workflow.git
 
+      # Create a new branch for updates
       - name: Create new branch for translations
         run: |
+          git checkout master
           git checkout -b update-translations
-          git add Aam_Digital_French.xlf
+          git add src/assets/locale/*.xlf
           git commit -m "Update translations from POEditor"
 
+      # Push the new branch to the repository
       - name: Push changes
         run: git push origin update-translations
 
+      # Create pull request
       - name: Create pull request
         uses: peter-evans/create-pull-request@v5
         with:

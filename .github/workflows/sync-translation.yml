@@ -73,7 +73,7 @@ jobs:
               exit 1
             fi
 
-            curl -L $url -o src/assets/locale/messages.$lang.xlf
+            curl -L $url -o Aam_Digital_French.xlf
             echo "Downloaded messages.$lang.xlf successfully"
             echo "Waiting for 1 minutes to respect rate limits..."
             sleep 60
@@ -89,7 +89,7 @@ jobs:
       - name: Create new branch for translations
         run: |
           git checkout -b update-translations
-          git add src/assets/locale/messages.*.xlf
+          git add Aam_Digital_French.xlf
           git commit -m "Update translations from POEditor"
 
       - name: Push changes
@@ -101,4 +101,5 @@ jobs:
           branch: update-translations
           base: master
           title: "Update translations from POEditor"
-          body: "This PR updates the translations exported from POEditor."
+          body: |
+            This PR updates the translations exported from POEditor.

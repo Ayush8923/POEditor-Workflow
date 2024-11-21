@@ -81,10 +81,21 @@ jobs:
       # Step 3: Detect downloaded files
       - name: Detect downloaded files
         run: |
-          # Move all downloaded `.xlf` files into the desired directory
+          echo "Listing all files in the current directory:"
+          ls -la
+
+          # Ensure the `src/assets/locale/` directory exists
           mkdir -p src/assets/locale/
-          mv *.xlf src/assets/locale/
-          echo "Moved downloaded files to src/assets/locale/"
+
+          # Move any downloaded file (assuming it's the only new file)
+          downloaded_file=$(find . -type f -name "*.xlf" | head -n 1)
+          if [ -n "$downloaded_file" ]; then
+            echo "Found downloaded file: $downloaded_file"
+            mv "$downloaded_file" src/assets/locale/
+          else
+            echo "No downloaded files found."
+            exit 1
+          fi
 
       # Configure Git
       - name: Configure Git

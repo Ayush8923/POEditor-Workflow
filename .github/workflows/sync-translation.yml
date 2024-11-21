@@ -71,11 +71,25 @@ jobs:
             echo "Response: $response"
             status=$(echo $response | jq -r '.response.status')
 
-            # Download the file from the url if the export is successful
+            # Download the file from the URL if the export is successful
             if [ "$status" == "success" ]; then
-              url=$(echo $response | jq -r '.result.url' | sed 's/\\//g')
-              curl -v -s -o src/assets/translated/messages.$lang.xlf $url
-              echo "Downloaded translations for $lang"
+              url=$(echo $response | jq -r '.result.url')
+
+              if [ -n "$url" ]; then
+                echo "Downloading translations for $lang from $url"
+                # Use curl to download the file
+                curl -s -o src/assets/translated/messages.$lang.xlf $url
+                
+                if [ $? -eq 0 ]; then
+                  echo "Downloaded translations for $lang"
+                else
+                  echo "Failed to download translations for $lang"
+                  exit 1
+                fi
+              else
+                echo "No URL found for downloading translations for $lang"
+                exit 1
+              fi
             else
               echo "Error exporting translations for $lang: $response"
               exit 1

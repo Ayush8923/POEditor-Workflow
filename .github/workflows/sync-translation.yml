@@ -99,6 +99,6 @@ jobs:
         uses: peter-evans/create-pull-request@v5
         with:
           branch: update-translations
+          base: master
           title: "Update translations from POEditor"
           body: "This PR updates the translations exported from POEditor."
-          labels: translations

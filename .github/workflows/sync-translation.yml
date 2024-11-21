@@ -50,7 +50,6 @@ jobs:
             sleep 60
           done
 
-      # Export updated translations from POEditor
       - name: Export translations from POEditor
         run: |
           # Define languages
@@ -73,9 +72,10 @@ jobs:
               exit 1
             fi
 
-            curl -L $url -o Aam_Digital_French.xlf
-            echo "Downloaded messages.$lang.xlf successfully"
-            echo "Waiting for 1 minutes to respect rate limits..."
+            # Download the file
+            filename="Aam_Digital_French.xlf"
+            curl -L "$url" -o "src/assets/locale/$filename"
+            echo "Downloaded $filename successfully"
             sleep 60
           done
 

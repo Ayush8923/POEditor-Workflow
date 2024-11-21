@@ -66,41 +66,15 @@ jobs:
               -F "type=xlf")
 
             echo "Response: $response"
-            url=$(echo $response | jq -r '.result.url')
-
-            if [ -z "$url" ] || [ "$url" = "null" ]; then
-              echo "Error: Export API did not return a valid URL for $lang"
+            status=$(echo $response | jq -r '.response.status')
+            # Download the file from the url
+            if [ "$status" == "success" ]; then
+              url=$(echo $response | jq -r '.result.url')
+              curl -s -o src/assets/translated/messages.$lang.xlf $url
+            else
+              echo "Error exporting translations for $lang: $response"
               exit 1
             fi
-
-            # Download the file (preserve original name from URL)
-            curl -L -O "$url" 
-            echo "Downloaded file from $url"
-          done
-
-      - name: Move downloaded file to the desired directory
-        run: |
-          echo "Listing all files in the current directory:"
-          ls -la
-
-          # Ensure the destination directory exists
-          mkdir -p src/assets/locale/
-
-          # Check if the specific file exists
-          if [ -f "Aam_Digital_Italian.xlf" ]; then
-            echo "Found Aam_Digital_Italian.xlf"
-
-            # Check if it already exists in the destination
-            if [ -f "src/assets/locale/Aam_Digital_Italian.xlf" ]; then
-              echo "File Aam_Digital_Italian.xlf already exists in src/assets/locale/. Skipping move."
-            else
-              mv "Aam_Digital_Italian.xlf" src/assets/locale/
-              echo "Moved Aam_Digital_Italian.xlf to src/assets/locale/"
-            fi
-          else
-            echo "Aam_Digital_Italian.xlf not found."
-            exit 1
-          fi
 
       # Configure Git
       - name: Configure Git
@@ -114,7 +88,7 @@ jobs:
         run: |
           git checkout master
           git checkout -b update-translations
-          git add src/assets/locale/*.xlf
+          git add src/assets/translated/*.xlf
           git commit -m "Update translations from POEditor"
 
       # Push the new branch to the repository

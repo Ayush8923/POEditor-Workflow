@@ -22,6 +22,9 @@ jobs:
       - name: Upload translations to POEditor
         run: |
           declare -A files
+          # files["en"]="src/assets/locale/messages.xlf"
+          # files["fr"]="src/assets/locale/messages.fr.xlf"
+          # files["de"]="src/assets/locale/messages.de.xlf"
           files["it"]="src/assets/locale/messages.it.xlf"
 
           for lang in "${!files[@]}"; do
@@ -92,7 +95,7 @@ jobs:
       - name: Create new branch for translations
         run: |
           git checkout master
-          git checkout -b update-translation
+          git checkout -b update-translation-lang
 
           if git diff --quiet; then
             echo "No changes to commit. Skipping PR creation."
@@ -103,12 +106,12 @@ jobs:
           git commit -m "Update translations from POEditor"
 
       - name: Push changes
-        run: git push origin update-translation
+        run: git push origin update-translation-lang
 
       - name: Create pull request
         uses: peter-evans/create-pull-request@v5
         with:
-          branch: update-translation
+          branch: update-translation-lang
           base: master
           title: "Update translations from POEditor"
           body: |

@@ -13,21 +13,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Set up node
         uses: actions/setup-node@v4
 
-      # Upload translations to POEditor
       - name: Upload translations to POEditor
         run: |
-          # Define the files and languages
           declare -A files
-          # files["en"]="src/assets/locale/messages.xlf"
-          # files["fr"]="src/assets/locale/messages.fr.xlf"
-          # files["de"]="src/assets/locale/messages.de.xlf"
           files["it"]="src/assets/locale/messages.it.xlf"
 
           for lang in "${!files[@]}"; do
@@ -39,7 +33,6 @@ jobs:
               -F "updating=terms_translations" \
               -F "file=@${files[$lang]}")
 
-            echo "Response: $response"
             status=$(echo $response | jq -r '.response.status')
 
             if [ "$status" != "success" ]; then
@@ -47,17 +40,13 @@ jobs:
               exit 1
             fi
 
-            echo "Waiting for 1 minutes to respect rate limits..."
+            echo "Waiting for 1 minute to respect rate limits..."
             sleep 60
           done
 
-      # Export translations from POEditor
       - name: Export translations from POEditor
         run: |
-          # Define languages
           languages=("it")
-
-          # Create the target directory if it doesn't exist
           mkdir -p src/assets/translated/
 
           for lang in "${languages[@]}"; do
@@ -68,24 +57,21 @@ jobs:
               -F "language=$lang" \
               -F "type=xlf")
 
-            echo "Response: $response"
             status=$(echo $response | jq -r '.response.status')
 
-            # Download the file from the URL if the export is successful
             if [ "$status" == "success" ]; then
               url=$(echo $response | jq -r '.result.url')
 
               if [ -n "$url" ]; then
                 echo "Downloading translations for $lang from $url"
-                # Use curl to download the file
                 curl -s -o src/assets/translated/messages.$lang.xlf $url
-                
-                if [ $? -eq 0 ]; then
-                  echo "Downloaded translations for $lang"
-                else
+
+                if [ ! -f "src/assets/translated/messages.$lang.xlf" ]; then
                   echo "Failed to download translations for $lang"
                   exit 1
                 fi
+
+                echo "Downloaded translations for $lang"
               else
                 echo "No URL found for downloading translations for $lang"
                 exit 1
@@ -97,26 +83,28 @@ jobs:
           done
         shell: /usr/bin/bash -e {0}
 
-      # Configure Git
       - name: Configure Git
         run: |
           git config user.name "Ayush8923"
           git config user.email "ayuuniyal7@gmail.com"
           git remote set-url origin https://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@github.com/Ayush8923/POEditor-Workflow.git
 
-      # Create a new branch for updates
       - name: Create new branch for translations
         run: |
           git checkout master
           git checkout -b update-translation
+
+          if git diff --quiet; then
+            echo "No changes to commit. Skipping PR creation."
+            exit 0
+          fi
+
           git add src/assets/translated/*.xlf
           git commit -m "Update translations from POEditor"
 
-      # Push the new branch to the repository
       - name: Push changes
         run: git push origin update-translation
 
-      # Create pull request
       - name: Create pull request
         uses: peter-evans/create-pull-request@v5
         with:

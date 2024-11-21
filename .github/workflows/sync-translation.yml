@@ -5,6 +5,9 @@ on:
     branches:
       - master
 
+permissions:
+  contents: write
+
 jobs:
   sync-translations:
     runs-on: ubuntu-latest
@@ -81,7 +84,7 @@ jobs:
         run: |
           git config user.name "Ayush8923"
           git config user.email "ayuuniyal7@gmail.com"
-          git config user.password "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"
+          git remote set-url origin https://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@github.com/Ayush8923/POEditor-Workflow.git
 
       - name: Create new branch for translations
         run: |

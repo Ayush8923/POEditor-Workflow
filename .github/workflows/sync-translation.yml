@@ -108,19 +108,19 @@ jobs:
       - name: Create new branch for translations
         run: |
           git checkout master
-          git checkout -b update-translations
+          git checkout -b update-translation
           git add src/assets/translated/*.xlf
           git commit -m "Update translations from POEditor"
 
       # Push the new branch to the repository
       - name: Push changes
-        run: git push origin update-translations
+        run: git push origin update-translation
 
       # Create pull request
       - name: Create pull request
         uses: peter-evans/create-pull-request@v5
         with:
-          branch: update-translations
+          branch: update-translation
           base: master
           title: "Update translations from POEditor"
           body: |

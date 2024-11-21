@@ -16,57 +16,64 @@ jobs:
       - name: Set up node
         uses: actions/setup-node@v4
 
+      # Upload translations to POEditor
       - name: Upload translations to POEditor
         run: |
-          # Upload the default English file
-          curl -X POST https://api.poeditor.com/v2/projects/upload \
-            -F "api_token=56acaf6808f07eb52c5b39a3abea19a7" \
-            -F "id=740876" \
-            -F "language=en" \
-            -F "updating=terms_translations" \
-            -F "file=@src/assets/locale/messages.xlf"
+          # Define the files and languages
+          declare -A files
+          # files["en"]="src/assets/locale/messages.xlf"
+          # files["fr"]="src/assets/locale/messages.fr.xlf"
+          # files["de"]="src/assets/locale/messages.de.xlf"
+          files["it"]="src/assets/locale/messages.it.xlf"
 
-          echo "Waiting for 1 minutes to respect rate limit..."
-          sleep 60
-
-          # Upload other language files
-          for lang in fr de it; do
-            curl -X POST https://api.poeditor.com/v2/projects/upload \
+          for lang in "${!files[@]}"; do
+            echo "Uploading ${files[$lang]} for language $lang"
+            response=$(curl -s -X POST https://api.poeditor.com/v2/projects/upload \
               -F "api_token=56acaf6808f07eb52c5b39a3abea19a7" \
               -F "id=740876" \
               -F "language=$lang" \
               -F "updating=terms_translations" \
-              -F "file=@src/assets/locale/messages.$lang.xlf"
-            
-            echo "Waiting for 1 minutes to respect rate limit..."
-            sleep 60
+              -F "file=@${files[$lang]}")
+
+            echo "Response: $response"
+            status=$(echo $response | jq -r '.response.status')
+
+            if [ "$status" != "success" ]; then
+              echo "Error uploading file for $lang: $response"
+              exit 1
+            fi
+
+            echo "Waiting for 2 minutes to respect rate limits..."
+            sleep 120
           done
 
       # Export updated translations from POEditor
-      - name: Export updated translations
+      - name: Export translations from POEditor
         run: |
-          response=$(curl -X POST https://api.poeditor.com/v2/projects/export \
-                -F "api_token=56acaf6808f07eb52c5b39a3abea19a7" \
-                -F "id=740876" \
-                -F "language=end" \
-                -F "type=xlf")
-              url=$(echo $response | jq -r '.result.url')
-              curl -L $url -o src/assets/locale/messages.xlf
+          # Define languages
+          # languages=("en" "fr" "de" "it")
+          languages=("it")
 
-          echo "Waiting for 1 minutes to respect rate limit..."
-          sleep 60
-
-          for lang in fr de it; do
-            response=$(curl -X POST https://api.poeditor.com/v2/projects/export \
+          for lang in "${languages[@]}"; do
+            echo "Exporting translations for language $lang"
+            response=$(curl -s -X POST https://api.poeditor.com/v2/projects/export \
               -F "api_token=56acaf6808f07eb52c5b39a3abea19a7" \
               -F "id=740876" \
               -F "language=$lang" \
               -F "type=xlf")
-            url=$(echo $response | jq -r '.result.url')
-            curl -L $url -o src/assets/locale/messages.$lang.xlf
 
-          echo "Waiting for 1 minutes to respect rate limit..."
-          sleep 60
+            echo "Response: $response"
+            url=$(echo $response | jq -r '.result.url')
+
+            if [ -z "$url" ] || [ "$url" = "null" ]; then
+              echo "Error: Export API did not return a valid URL for $lang"
+              exit 1
+            fi
+
+            curl -L $url -o src/assets/locale/messages.$lang.xlf
+            echo "Downloaded messages.$lang.xlf successfully"
+            echo "Waiting for 2 minutes to respect rate limits..."
+            sleep 120
           done
 
       # Commit and create a new PR
@@ -78,7 +85,6 @@ jobs:
       - name: Create new branch for translations
         run: |
           git checkout -b update-translations
-          git add src/assets/locale/messages.xlf
           git add src/assets/locale/messages.*.xlf
           git commit -m "Update translations from POEditor"
 

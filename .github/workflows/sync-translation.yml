@@ -43,6 +43,8 @@ jobs:
             echo "Waiting for 1 minute to respect rate limits..."
             sleep 60
           done
+        shell: /usr/bin/bash -e {0}
+
       - name: Export translations from POEditor
         run: |
           languages=("it")
@@ -76,12 +78,21 @@ jobs:
           done
         shell: /usr/bin/bash -e {0}
 
+      - name: Move translations to locale folder
+        run: |
+          for file in src/assets/translated/*.xlf; do
+            filename=$(basename "$file")
+            mv "$file" "src/assets/locale/$filename"
+          done
+        shell: /usr/bin/bash -e {0}
+
       - name: Configure Git
         run: |
           git config user.name "Ayush8923"
           git config user.email "ayuuniyal7@gmail.com"
           git remote set-url origin https://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@github.com/Ayush8923/POEditor-Workflow.git
           git remote set-url origin https://x-access-token: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@github.com/Ayush8923/POEditor-Workflow.git
+
       - name: Create new branch for translations
         run: |
           git checkout master
@@ -90,8 +101,9 @@ jobs:
             echo "No changes to commit. Skipping PR creation."
             exit 0
           fi
-          git add src/assets/translated/*.xlf
+          git add src/assets/locale/*.xlf
           git commit -m "Update translations from POEditor"
+
       - name: Push changes
         run: git push origin update-translation-messages
 

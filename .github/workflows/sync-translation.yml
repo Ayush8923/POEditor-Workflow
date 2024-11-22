@@ -68,9 +68,8 @@ jobs:
               if [ -n "$url" ]; then
                 echo "Downloading translations for $lang from $url"
                 curl -s -o src/assets/locale/messages.$lang.xlf "$url" --create-dirs
-                touch src/assets/locale/messages.$lang.xlf
-
-                echo "Downloaded translations for $lang"
+                echo "File content after export:"
+                cat src/assets/locale/messages.$lang.xlf
               else
                 echo "No URL found for downloading translations for $lang"
                 exit 1
@@ -93,13 +92,11 @@ jobs:
         run: |
           git checkout feat/testing-workflow
           git checkout -b update-translation-language
-
-          # Ensure changes are staged and committed
-          git add -A
+          git add -A src/assets/locale/messages.*.xlf
           git commit --allow-empty -m "Update translations from POEditor"
 
       - name: Push changes
-        run: git push origin update-translation-language
+        run: git push origin update-translation-language --force
 
       - name: Create pull request
         uses: peter-evans/create-pull-request@v5

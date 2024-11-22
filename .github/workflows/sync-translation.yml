@@ -85,7 +85,7 @@ jobs:
       - name: Create new branch for translations
         run: |
           git checkout master
-          git checkout -b update-translation-language
+          git checkout -b update-translation-messages
           if git diff --quiet; then
             echo "No changes to commit. Skipping PR creation."
             exit 0
@@ -93,12 +93,12 @@ jobs:
           git add src/assets/translated/*.xlf
           git commit -m "Update translations from POEditor"
       - name: Push changes
-        run: git push origin update-translation-language
+        run: git push origin update-translation-messages
 
       - name: Create pull request
         uses: peter-evans/create-pull-request@v5
         with:
-          branch: update-translation-language
+          branch: update-translation-messages
           base: master
           title: "Update translations from POEditor"
           body: |

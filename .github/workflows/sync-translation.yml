@@ -91,7 +91,7 @@ jobs:
             echo "No changes to commit. Skipping PR creation."
             exit 0
           fi
-          git add src/assets/translated/*.xlf
+          git add src/assets/locale/*.xlf
           git commit -m "Update translations from POEditor"
       - name: Push changes
         run: git push origin update-translation-messages

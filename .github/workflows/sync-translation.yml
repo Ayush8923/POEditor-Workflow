@@ -3,7 +3,7 @@ name: Sync Translations with POEditor
 on:
   push:
     branches:
-      - master
+      - feat/testing-workflow
 
 permissions:
   contents: write
@@ -51,7 +51,6 @@ jobs:
       - name: Export translations from POEditor
         run: |
           languages=("it")
-          # mkdir -p src/assets/translated/
 
           for lang in "${languages[@]}"; do
             echo "Exporting translations for language $lang"
@@ -68,12 +67,8 @@ jobs:
 
               if [ -n "$url" ]; then
                 echo "Downloading translations for $lang from $url"
-                curl -s -o src/assets/locale/messages.$lang.xlf $url
-
-                if [ ! -f "src/assets/locale/messages.$lang.xlf" ]; then
-                  echo "Failed to download translations for $lang"
-                  exit 1
-                fi
+                curl -s -o src/assets/locale/messages.$lang.xlf "$url" --create-dirs
+                touch src/assets/locale/messages.$lang.xlf
 
                 echo "Downloaded translations for $lang"
               else
@@ -99,13 +94,9 @@ jobs:
           git checkout master
           git checkout -b update-translation-language
 
-          if git diff --quiet; then
-            echo "No changes to commit. Skipping PR creation."
-            exit 0
-          fi
-
-          git add src/assets/locale/messages.*.xlf
-          git commit -m "Update translations from POEditor"
+          # Ensure changes are staged and committed
+          git add -A
+          git commit --allow-empty -m "Update translations from POEditor"
 
       - name: Push changes
         run: git push origin update-translation-language

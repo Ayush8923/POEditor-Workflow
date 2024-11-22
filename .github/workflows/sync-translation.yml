@@ -43,9 +43,10 @@ jobs:
             echo "Waiting for 1 minute to respect rate limits..."
             sleep 60
           done
-      - name: Export and replace translations
+      - name: Export translations from POEditor
         run: |
           languages=("it")
+          # mkdir -p src/assets/translated/
           for lang in "${languages[@]}"; do
             echo "Exporting translations for language $lang"
             response=$(curl -s -X POST https://api.poeditor.com/v2/projects/export \
@@ -58,15 +59,13 @@ jobs:
               url=$(echo $response | jq -r '.result.url')
               if [ -n "$url" ]; then
                 echo "Downloading translations for $lang from $url"
-                curl -s -o temp_translations.xlf $url
-                if [ ! -f "temp_translations.xlf" ]; then
+                rm -f src/assets/locale/messages.$lang.xlf
+                curl -s -o src/assets/locale/messages.$lang.xlf $url
+                if [ ! -f "src/assets/locale/messages.$lang.xlf" ]; then
                   echo "Failed to download translations for $lang"
                   exit 1
                 fi
-                echo "Replacing content in the existing file for $lang"
-                cp temp_translations.xlf src/assets/locale/messages.$lang.xlf
-                rm temp_translations.xlf
-                echo "Replaced translations for $lang"
+                echo "Downloaded translations for $lang"
               else
                 echo "No URL found for downloading translations for $lang"
                 exit 1
@@ -82,9 +81,11 @@ jobs:
         run: |
           git config user.name "Ayush8923"
           git config user.email "ayuuniyal7@gmail.com"
+          git remote set-url origin https://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@github.com/Ayush8923/POEditor-Workflow.git
           git remote set-url origin https://x-access-token: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@github.com/Ayush8923/POEditor-Workflow.git
       - name: Create new branch for translations
         run: |
+          git checkout master
           git checkout -b update-translation-messages
           if git diff --quiet; then
             echo "No changes to commit. Skipping PR creation."

@@ -103,7 +103,7 @@ jobs:
       - name: Create pull request
         uses: peter-evans/create-pull-request@v5
         with:
-          branch: update-translation-language
+          branch: master
           base: feat/testing-workflow
           title: "Update translations from POEditor"
           body: |

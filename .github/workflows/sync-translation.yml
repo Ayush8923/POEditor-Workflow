@@ -92,7 +92,7 @@ jobs:
         run: |
           git checkout feat/testing-workflow
           git checkout -b update-translation-language
-          git add -A src/assets/locale/messages.*.xlf
+          git add .
           git commit --allow-empty -m "Update translations from POEditor"
 
       - name: Push changes

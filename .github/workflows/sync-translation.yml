@@ -3,7 +3,7 @@ name: Sync Translations with POEditor
 on:
   push:
     branches:
-      - feat/testing-workflow
+      - master
 
 permissions:
   contents: write
@@ -27,7 +27,6 @@ jobs:
           # files["fr"]="src/assets/locale/messages.fr.xlf"
           # files["de"]="src/assets/locale/messages.de.xlf"
           files["it"]="src/assets/locale/messages.it.xlf"
-
           for lang in "${!files[@]}"; do
             echo "Uploading ${files[$lang]} for language $lang"
             response=$(curl -s -X POST https://api.poeditor.com/v2/projects/upload \
@@ -36,22 +35,18 @@ jobs:
               -F "language=$lang" \
               -F "updating=terms_translations" \
               -F "file=@${files[$lang]}")
-
             status=$(echo $response | jq -r '.response.status')
-
             if [ "$status" != "success" ]; then
               echo "Error uploading file for $lang: $response"
               exit 1
             fi
-
             echo "Waiting for 1 minute to respect rate limits..."
             sleep 60
           done
-
       - name: Export translations from POEditor
         run: |
           languages=("it")
-
+          mkdir -p src/assets/translated/
           for lang in "${languages[@]}"; do
             echo "Exporting translations for language $lang"
             response=$(curl -s -X POST https://api.poeditor.com/v2/projects/export \
@@ -59,17 +54,17 @@ jobs:
               -F "id=740876" \
               -F "language=$lang" \
               -F "type=xlf")
-
             status=$(echo $response | jq -r '.response.status')
-
             if [ "$status" == "success" ]; then
               url=$(echo $response | jq -r '.result.url')
-
               if [ -n "$url" ]; then
                 echo "Downloading translations for $lang from $url"
-                curl -s -o src/assets/locale/messages.$lang.xlf "$url" --create-dirs
-                echo "File content after export:"
-                cat src/assets/locale/messages.$lang.xlf
+                curl -s -o src/assets/translated/messages.$lang.xlf $url
+                if [ ! -f "src/assets/translated/messages.$lang.xlf" ]; then
+                  echo "Failed to download translations for $lang"
+                  exit 1
+                fi
+                echo "Downloaded translations for $lang"
               else
                 echo "No URL found for downloading translations for $lang"
                 exit 1
@@ -87,24 +82,24 @@ jobs:
           git config user.email "ayuuniyal7@gmail.com"
           git remote set-url origin https://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@github.com/Ayush8923/POEditor-Workflow.git
           git remote set-url origin https://x-access-token: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@github.com/Ayush8923/POEditor-Workflow.git
-
       - name: Create new branch for translations
         run: |
-          git checkout feat/testing-workflow
+          git checkout master
           git checkout -b update-translation-language
-          git add --force src/assets/locale/*
-          git status
-          git commit --allow-empty -m "Update translations from POEditor"
-
+          if git diff --quiet; then
+            echo "No changes to commit. Skipping PR creation."
+            exit 0
+          fi
+          git add src/assets/translated/*.xlf
+          git commit -m "Update translations from POEditor"
       - name: Push changes
-        run: |
-          git push --set-upstream origin update-translation-language --force
+        run: git push origin update-translation-language
 
       - name: Create pull request
         uses: peter-evans/create-pull-request@v5
         with:
-          branch: master
-          base: feat/testing-workflow
+          branch: update-translation-language
+          base: master
           title: "Update translations from POEditor"
           body: |
-            This PR updates the translations exported from PO
+            This PR updates the translations exported from POEditor.

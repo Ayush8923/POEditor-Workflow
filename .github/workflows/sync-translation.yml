@@ -92,18 +92,13 @@ jobs:
           git config user.name "Ayush8923"
           git config user.email "ayuuniyal7@gmail.com"
           git remote set-url origin https://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@github.com/Ayush8923/POEditor-Workflow.git
-          git remote set-url origin https://x-access-token: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@github.com/Ayush8923/POEditor-Workflow.git
 
       - name: Create new branch for translations
         run: |
           git checkout master
           git checkout -b update-translation-message
-          if git diff --quiet; then
-            echo "No changes to commit. Skipping PR creation."
-            exit 0
-          fi
           git add src/assets/locale/*.xlf
-          git commit -m "Update translations from POEditor"
+          git commit -m "Update translations from POEditor" || echo "No changes to commit"
 
       - name: Push changes
         run: git push origin update-translation-message

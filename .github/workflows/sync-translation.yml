@@ -13,6 +13,9 @@ jobs:
   sync-translations:
     runs-on: ubuntu-latest
 
+    environment:
+      name: staging
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -23,15 +26,16 @@ jobs:
       - name: Upload translations to POEditor
         run: |
           declare -A files
-          # files["en"]="src/assets/locale/messages.xlf"
+          # Populate file mappings dynamically
+          # files["en"]="src/assets/locale/messages.en.xlf"
           # files["fr"]="src/assets/locale/messages.fr.xlf"
           # files["de"]="src/assets/locale/messages.de.xlf"
           files["it"]="src/assets/locale/messages.it.xlf"
           for lang in "${!files[@]}"; do
             echo "Uploading ${files[$lang]} for language $lang"
             response=$(curl -s -X POST https://api.poeditor.com/v2/projects/upload \
-              -F "api_token=56acaf6808f07eb52c5b39a3abea19a7" \
-              -F "id=740876" \
+              -F "api_token=${{ secrets.POEDITOR_API_TOKEN }}" \
+              -F "id=${{ secrets.POEDITOR_PROJECT_ID }}" \
               -F "language=$lang" \
               -F "updating=terms_translations" \
               -F "file=@${files[$lang]}")
@@ -45,13 +49,14 @@ jobs:
           done
       - name: Export translations from POEditor
         run: |
+          # languages=("en" "fr" "de" "it")
           languages=("it")
-          # mkdir -p src/assets/translated/
+          mkdir -p src/assets/translated/
           for lang in "${languages[@]}"; do
             echo "Exporting translations for language $lang"
             response=$(curl -s -X POST https://api.poeditor.com/v2/projects/export \
-              -F "api_token=56acaf6808f07eb52c5b39a3abea19a7" \
-              -F "id=740876" \
+              -F "api_token=${{ secrets.POEDITOR_API_TOKEN }}" \
+              -F "id=${{ secrets.POEDITOR_PROJECT_ID }}" \
               -F "language=$lang" \
               -F "type=xlf")
             status=$(echo $response | jq -r '.response.status')
@@ -59,9 +64,8 @@ jobs:
               url=$(echo $response | jq -r '.result.url')
               if [ -n "$url" ]; then
                 echo "Downloading translations for $lang from $url"
-                rm -f src/assets/locale/messages.$lang.xlf
-                curl -s -o src/assets/locale/messages.$lang.xlf $url
-                if [ ! -f "src/assets/locale/messages.$lang.xlf" ]; then
+                curl -s -o src/assets/translated/messages.$lang.xlf $url
+                if [ ! -f "src/assets/translated/messages.$lang.xlf" ]; then
                   echo "Failed to download translations for $lang"
                   exit 1
                 fi
@@ -79,27 +83,26 @@ jobs:
 
       - name: Configure Git
         run: |
-          git config user.name "Ayush8923"
-          git config user.email "ayuuniyal7@gmail.com"
-          git remote set-url origin https://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@github.com/Ayush8923/POEditor-Workflow.git
-          git remote set-url origin https://x-access-token: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@github.com/Ayush8923/POEditor-Workflow.git
+          git config user.name ${{ secrets.GIT_USERNAME }}
+          git config user.email ${{ secrets.GIT_EMAIL }}
+          git remote set-url origin https://${{ secrets.PERSONAL_ACCESS_TOKEN }}@${{ secrets.REPO_URL }}
       - name: Create new branch for translations
         run: |
           git checkout master
-          git checkout -b update-translation-messages
+          git checkout -b update-translation-message
           if git diff --quiet; then
             echo "No changes to commit. Skipping PR creation."
             exit 0
           fi
-          git add src/assets/locale/*.xlf
+          git add src/assets/translated/*.xlf
           git commit -m "Update translations from POEditor"
       - name: Push changes
-        run: git push origin update-translation-messages
+        run: git push origin update-translation-message
 
       - name: Create pull request
         uses: peter-evans/create-pull-request@v5
         with:
-          branch: update-translation-messages
+          branch: update-translation-message
           base: master
           title: "Update translations from POEditor"
           body: |

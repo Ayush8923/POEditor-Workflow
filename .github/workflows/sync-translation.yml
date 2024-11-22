@@ -1,92 +1,30 @@
-name: Sync Translations with POEditor
+name: Update File Workflow
 
 on:
-  push:
-    branches:
-      - master
-
-permissions:
-  contents: write
-  pull-requests: write
+  schedule:
+    - cron: "0 0 * * *" # Runs daily at midnight (adjust as needed)
+  workflow_dispatch: # Manual trigger
 
 jobs:
-  sync-translations:
+  update-file:
     runs-on: ubuntu-latest
 
-    environment:
-      name: staging
-
     steps:
+      # Step 1: Check out the repository
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
-      - name: Set up node
-        uses: actions/setup-node@v4
-
-      - name: Upload translations to POEditor
+      # Step 2: Modify the file
+      - name: Update file content
         run: |
-          declare -A files
-          # Define file mappings
-          files["fr"]="src/assets/locale/messages.fr.xlf"
-          files["de"]="src/assets/locale/messages.de.xlf"
-          files["it"]="src/assets/locale/messages.it.xlf"
+          echo "Updated on $(date)" >> data.txt
 
-          for lang in "${!files[@]}"; do
-            echo "Uploading ${files[$lang]} for language $lang"
-            response=$(curl -s -X POST https://api.poeditor.com/v2/projects/upload \
-              -F "api_token=${{ secrets.POEDITOR_API_TOKEN }}" \
-              -F "id=${{ secrets.POEDITOR_PROJECT_ID }}" \
-              -F "language=$lang" \
-              -F "updating=terms_translations" \
-              -F "file=@${files[$lang]}")
-            status=$(echo $response | jq -r '.response.status')
-            if [ "$status" != "success" ]; then
-              echo "Error uploading file for $lang: $response"
-              exit 1
-            fi
-            echo "Waiting for 1 minute to respect rate limits..."
-            sleep 60
-          done
-
-      - name: Export translations from POEditor
+      # Step 3: Commit and push the changes
+      - name: Commit and push changes
         run: |
-          languages=("de" "fr" "it")
-          for lang in "${languages[@]}"; do
-            echo "Exporting translations for $lang"
-            response=$(curl -s -X POST https://api.poeditor.com/v2/projects/export \
-              -F "api_token=${{ secrets.POEDITOR_API_TOKEN }}" \
-              -F "id=${{ secrets.POEDITOR_PROJECT_ID }}" \
-              -F "language=$lang" \
-              -F "type=xlf")
-            url=$(echo $response | jq -r '.result.url')
-            curl -s -o src/assets/locale/messages.$lang.xlf $url
-          done
-
-      - name: Configure Git
-        run: |
-          git config user.name ${{ secrets.GIT_USERNAME }}
-          git config user.email ${{ secrets.GIT_EMAIL }}
-          git remote set-url origin https://${{ secrets.PERSONAL_ACCESS_TOKEN }}@${{ secrets.REPO_URL }}
-
-      - name: Create new branch for translations
-        run: |
-          git checkout master
-          git checkout -b update-translation-messagev2
-          if git diff --quiet; then
-            echo "No changes to commit. Skipping PR creation."
-            exit 0
-          fi
-          git add --force src/assets/locale/messages.*.xlf
-          git commit --allow-empty -m "Update translations from POEditor"
-
-      - name: Push changes
-        run: git push origin update-translation-messagev2
-
-      - name: Create pull request
-        uses: peter-evans/create-pull-request@v5
-        with:
-          branch: update-translation-messagev2
-          base: master
-          title: "Update translations from POEditor"
-          body: |
-            This PR updates the translations exported from POEditor.
+          git config user.name "Ayush8923"
+          git config user.email "ayuuniyal7@gmail.com"
+          git remote set-url origin https://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@github.com/Ayush8923/POEditor-Workflow.git
+          git add data.txt
+          git commit -m "Update file via GitHub Actions"
+          git push

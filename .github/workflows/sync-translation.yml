@@ -78,15 +78,6 @@ jobs:
           done
         shell: /usr/bin/bash -e {0}
 
-      - name: Move translations to locale folder
-        run: |
-          for file in src/assets/translated/*.xlf; do
-            filename=$(basename "$file")
-            mv "$file" "src/assets/locale/$filename"
-            echo "FileName: Moved $filename to src/assets/locale"
-          done
-        shell: /usr/bin/bash -e {0}
-
       - name: Configure Git
         run: |
           git config user.name "Ayush8923"
@@ -97,7 +88,7 @@ jobs:
         run: |
           git checkout master
           git checkout -b update-translation-message
-          git add src/assets/locale/*.xlf
+          git add src/assets/translated/*.xlf
           git commit -m "Update translations from POEditor" || echo "No changes to commit"
 
       - name: Push changes

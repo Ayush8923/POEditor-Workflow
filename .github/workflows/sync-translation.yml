@@ -85,7 +85,6 @@ jobs:
           git remote set-url origin https://x-access-token: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@github.com/Ayush8923/POEditor-Workflow.git
       - name: Create new branch for translations
         run: |
-          git checkout master
           git checkout -b update-translation-messages
           if git diff --quiet; then
             echo "No changes to commit. Skipping PR creation."

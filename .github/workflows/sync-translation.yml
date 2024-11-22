@@ -92,8 +92,8 @@ jobs:
         run: |
           git checkout feat/testing-workflow
           git checkout -b update-translation-language
-          git add .
-          git commit --allow-empty -m "Update translations from POEditor"
+          git add src/assets/locale/*
+          git commit -m "Update translations from POEditor"
 
       - name: Push changes
         run: git push origin update-translation-language --force

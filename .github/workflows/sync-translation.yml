@@ -91,7 +91,7 @@ jobs:
 
       - name: Create new branch for translations
         run: |
-          git checkout master
+          git checkout feat/testing-workflow
           git checkout -b update-translation-language
 
           # Ensure changes are staged and committed

@@ -92,17 +92,19 @@ jobs:
         run: |
           git checkout feat/testing-workflow
           git checkout -b update-translation-language
-          git add src/assets/locale/*
-          git commit -m "Update translations from POEditor"
+          git add --force src/assets/locale/*
+          git status
+          git commit --allow-empty -m "Update translations from POEditor"
 
       - name: Push changes
-        run: git push origin update-translation-language --force
+        run: |
+          git push --set-upstream origin update-translation-language --force
 
       - name: Create pull request
         uses: peter-evans/create-pull-request@v5
         with:
           branch: update-translation-language
-          base: master
+          base: feat/testing-workflow
           title: "Update translations from POEditor"
           body: |
-            This PR updates the translations exported from POEditor.
+            This PR updates the translations exported from PO

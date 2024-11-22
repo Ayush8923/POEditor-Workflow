@@ -51,7 +51,7 @@ jobs:
       - name: Export translations from POEditor
         run: |
           languages=("it")
-          mkdir -p src/assets/translated/
+          # mkdir -p src/assets/translated/
 
           for lang in "${languages[@]}"; do
             echo "Exporting translations for language $lang"
@@ -68,9 +68,9 @@ jobs:
 
               if [ -n "$url" ]; then
                 echo "Downloading translations for $lang from $url"
-                curl -s -o src/assets/translated/messages.$lang.xlf $url
+                curl -s -o src/assets/locale/messages.$lang.xlf $url
 
-                if [ ! -f "src/assets/translated/messages.$lang.xlf" ]; then
+                if [ ! -f "src/assets/locale/messages.$lang.xlf" ]; then
                   echo "Failed to download translations for $lang"
                   exit 1
                 fi
@@ -104,7 +104,7 @@ jobs:
             exit 0
           fi
 
-          git add src/assets/translated/*.xlf
+          git add src/assets/locale/messages.*.xlf
           git commit -m "Update translations from POEditor"
 
       - name: Push changes

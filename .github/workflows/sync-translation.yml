@@ -18,10 +18,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Step 2: Modify the file
+      # Step 2: Modify the file (overwrite content)
       - name: Update file content
         run: |
-          echo "Updated on $(date)" >> data.txt
+          echo "File updated on $(date)" > data.txt
 
       # Step 3: Commit and push the changes
       - name: Commit and push changes

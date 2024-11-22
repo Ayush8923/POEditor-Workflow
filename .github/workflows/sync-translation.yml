@@ -26,7 +26,7 @@ jobs:
       - name: Upload translations to POEditor
         run: |
           declare -A files
-          # Populate file mappings dynamically
+          # Define file mappings
 
           # files["en"]="src/assets/locale/messages.en.xlf"
           # files["fr"]="src/assets/locale/messages.fr.xlf"
@@ -52,9 +52,7 @@ jobs:
 
       - name: Export translations from POEditor
         run: |
-          # languages=("en" "fr" "de" "it")
-          languages=("it")
-          mkdir -p src/assets/translated/
+          languages=("en" "fr" "de" "it")
           for lang in "${languages[@]}"; do
             echo "Exporting translations for language $lang"
             response=$(curl -s -X POST https://api.poeditor.com/v2/projects/export \
@@ -67,12 +65,12 @@ jobs:
               url=$(echo $response | jq -r '.result.url')
               if [ -n "$url" ]; then
                 echo "Downloading translations for $lang from $url"
-                curl -s -o src/assets/translated/messages.$lang.xlf $url
-                if [ ! -f "src/assets/translated/messages.$lang.xlf" ]; then
+                curl -s -o src/assets/locale/messages.$lang.xlf $url
+                if [ ! -f "src/assets/locale/messages.$lang.xlf" ]; then
                   echo "Failed to download translations for $lang"
                   exit 1
                 fi
-                echo "Downloaded translations for $lang"
+                echo "Overwrote src/assets/locale/messages.$lang.xlf with updated translations."
               else
                 echo "No URL found for downloading translations for $lang"
                 exit 1
@@ -98,7 +96,7 @@ jobs:
             echo "No changes to commit. Skipping PR creation."
             exit 0
           fi
-          git add src/assets/translated/*.xlf
+          git add src/assets/locale/*.xlf
           git commit -m "Update translations from POEditor"
 
       - name: Push changes

@@ -48,6 +48,11 @@ jobs:
             sleep 60
           done
 
+      - name: Create new branch for translations
+        run: |
+          git checkout master
+          git checkout -b update-translation-message
+
       - name: Remove old translation files
         run: |
           FILE_PATH="src/assets/locale/messages.it.xlf"
@@ -57,6 +62,17 @@ jobs:
           else
             echo "File $FILE_PATH does not exist"
           fi
+
+      - name: Stage changes explicitly
+        run: |
+          echo "Staging updated translation files..."
+          git add -A
+          git status
+          if git diff --cached --quiet; then
+            echo "No changes detected. Exiting."
+            exit 0
+          fi
+          git commit -m "delete existing translation files"
 
       - name: Export translations from POEditor
         run: |
@@ -93,27 +109,24 @@ jobs:
           git config user.email ${{ secrets.GIT_EMAIL }}
           git remote set-url origin https://${{ secrets.PERSONAL_ACCESS_TOKEN }}@${{ secrets.REPO_URL }}
 
-      - name: Create new branch for translations
+      - name: Stage changes explicitly
         run: |
-          git checkout master
-          git checkout -b update-translation-messagev2
-
-      - name: Stage and commit changes
-        run: |
-          git add src/assets/locale/*.xlf
+          echo "Staging updated translation files..."
+          git add -A
+          git status
           if git diff --cached --quiet; then
-            echo "No changes to commit. Exiting."
+            echo "No changes detected. Exiting."
             exit 0
           fi
           git commit -m "Update translations from POEditor"
 
       - name: Push changes
-        run: git push origin update-translation-messagev2
+        run: git push origin update-translation-message
 
       - name: Create pull request
         uses: peter-evans/create-pull-request@v5
         with:
-          branch: update-translation-messagev2
+          branch: update-translation-message
           base: master
           title: "Update translations from POEditor"
           body: |

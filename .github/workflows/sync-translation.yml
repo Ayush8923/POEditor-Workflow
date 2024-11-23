@@ -83,7 +83,7 @@ jobs:
 
       - name: Create new branch for translations
         run: |
-          git checkout -b update-translations-$(date +%Y%m%d)
+          git checkout -b update-translations-messages
           if git diff --quiet; then
             echo "No changes to commit. Exiting."
             exit 0
@@ -94,11 +94,11 @@ jobs:
       - name: Push changes
         run: git push origin HEAD
 
-      - name: Create pull request
-        uses: peter-evans/create-pull-request@v5
-        with:
-          branch: update-translations-$(date +%Y%m%d)
-          base: master
-          title: "Update translations from POEditor"
-          body: |
-            This PR updates the translations exported from POEditor.
+      # - name: Create pull request
+      #   uses: peter-evans/create-pull-request@v5
+      #   with:
+      #     branch: update-translations-messages
+      #     base: master
+      #     title: "Update translations from POEditor"
+      #     body: |
+      #       This PR updates the translations exported from POEditor.

@@ -51,7 +51,7 @@ jobs:
 
       - name: Export translations from POEditor
         run: |
-          languages=("en")
+          languages=("en", "fr")
           for lang in "${languages[@]}"; do
             echo "Exporting translations for language $lang"
             response=$(curl -s -X POST https://api.poeditor.com/v2/projects/export \
@@ -64,7 +64,7 @@ jobs:
               url=$(echo $response | jq -r '.result.url')
               if [ -n "$url" ]; then
                 echo "Downloading translations for $lang from $url"
-                if [ "$lang" = "en" ]; then
+                if [ "$lang" == "en" ]; then
                   curl -s -o src/assets/locale/messages.xlf $url
                 else
                   curl -s -o src/assets/locale/messages.$lang.xlf $url
@@ -77,6 +77,8 @@ jobs:
               echo "Error exporting translations for $lang: $response"
               exit 1
             fi
+            echo "Waiting for 1 minute to respect rate limits..."
+            sleep 60
           done
 
       - name: Configure Git

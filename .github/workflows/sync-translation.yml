@@ -48,6 +48,12 @@ jobs:
             sleep 60
           done
 
+      - name: Configure Git
+        run: |
+          git config user.name ${{ secrets.GIT_USERNAME }}
+          git config user.email ${{ secrets.GIT_EMAIL }}
+          git remote set-url origin https://${{ secrets.PERSONAL_ACCESS_TOKEN }}@${{ secrets.REPO_URL }}
+
       - name: Create new branch for translations
         run: |
           git checkout master
@@ -102,12 +108,6 @@ jobs:
             echo "Error exporting translations for $lang: $response"
             exit 1
           fi
-
-      - name: Configure Git
-        run: |
-          git config user.name ${{ secrets.GIT_USERNAME }}
-          git config user.email ${{ secrets.GIT_EMAIL }}
-          git remote set-url origin https://${{ secrets.PERSONAL_ACCESS_TOKEN }}@${{ secrets.REPO_URL }}
 
       - name: Stage changes explicitly
         run: |

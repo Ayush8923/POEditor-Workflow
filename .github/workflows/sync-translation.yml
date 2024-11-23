@@ -96,7 +96,7 @@ jobs:
       - name: Create new branch for translations
         run: |
           git checkout master
-          git checkout -b update-translation-message
+          git checkout -b update-translation-messagev2
 
       - name: Stage and commit changes
         run: |
@@ -108,12 +108,12 @@ jobs:
           git commit -m "Update translations from POEditor"
 
       - name: Push changes
-        run: git push origin update-translation-message
+        run: git push origin update-translation-messagev2
 
       - name: Create pull request
         uses: peter-evans/create-pull-request@v5
         with:
-          branch: update-translation-message
+          branch: update-translation-messagev2
           base: master
           title: "Update translations from POEditor"
           body: |

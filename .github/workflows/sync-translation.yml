@@ -47,11 +47,12 @@ jobs:
             echo "Waiting for 1 minute to respect rate limits..."
             sleep 60
           done
+
       - name: Export translations from POEditor
         run: |
           # languages=("en" "fr" "de" "it")
           languages=("it")
-          mkdir -p src/assets/translated/
+          # mkdir -p src/assets/translated/
           for lang in "${languages[@]}"; do
             echo "Exporting translations for language $lang"
             response=$(curl -s -X POST https://api.poeditor.com/v2/projects/export \
@@ -60,12 +61,21 @@ jobs:
               -F "language=$lang" \
               -F "type=xlf")
             status=$(echo $response | jq -r '.response.status')
+
+            FILE_PATH="src/assets/locale/messages.$lang.xlf"
+            if [ -f "$FILE_PATH" ]; then
+              rm "$FILE_PATH"
+              echo "File $FILE_PATH has been removed."
+            else
+              echo "File $FILE_PATH does not exist."
+            fi
+
             if [ "$status" == "success" ]; then
               url=$(echo $response | jq -r '.result.url')
               if [ -n "$url" ]; then
                 echo "Downloading translations for $lang from $url"
-                curl -s -o src/assets/translated/messages.$lang.xlf $url
-                if [ ! -f "src/assets/translated/messages.$lang.xlf" ]; then
+                curl -s -o src/assets/locale/messages.$lang.xlf $url
+                if [ ! -f "src/assets/locale/messages.$lang.xlf" ]; then
                   echo "Failed to download translations for $lang"
                   exit 1
                 fi
@@ -94,7 +104,7 @@ jobs:
             echo "No changes to commit. Skipping PR creation."
             exit 0
           fi
-          git add src/assets/translated/*.xlf
+          git add src/assets/locale/*.xlf
           git commit -m "Update translations from POEditor"
       - name: Push changes
         run: git push origin update-translation-message

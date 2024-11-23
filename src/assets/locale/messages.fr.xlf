@@ -8779,6 +8779,110 @@ Template files can be in most office document formats (odt, docx, ods, xlsx, odp
           <context context-type="linenumber">3</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="5834379825186536704" datatype="html">
+        <source>Notes needing follow-up</source>
+        <target>Notes needing follow-up</target>
+        <note priority="1" from="description">dashboard widget subtitle</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/notes/dashboard-widgets/important-notes-dashboard/important-notes-dashboard.component.ts</context>
+          <context context-type="linenumber">35</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="471161806151891076" datatype="html">
+        <source>Notes require immediate attention or follow-up actions</source>
+        <target>Notes require immediate attention or follow-up actions</target>
+        <note priority="1" from="description">dashboard widget explanation</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/child-dev-project/notes/dashboard-widgets/important-notes-dashboard/important-notes-dashboard.component.ts</context>
+          <context context-type="linenumber">37</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1630785081498183127" datatype="html">
+        <source> by <x id="START_TAG_APP_ENTITY_FIELD_LABEL" ctype="x-app_entity_field_label" equiv-text="&lt;app-entity-field-label         [entityType]=&quot;_entity&quot;         [field]=&quot;groupBy[currentGroupIndex]&quot;       &gt;"/><x id="CLOSE_TAG_APP_ENTITY_FIELD_LABEL" ctype="x-app_entity_field_label" equiv-text="&lt;/app-entity-field-label&gt;"/> : </source>
+        <target> by <x id="START_TAG_APP_ENTITY_FIELD_LABEL" ctype="x-app_entity_field_label" equiv-text="&lt;app-entity-field-label         [entityType]=&quot;_entity&quot;         [field]=&quot;groupBy[currentGroupIndex]&quot;       &gt;"/><x id="CLOSE_TAG_APP_ENTITY_FIELD_LABEL" ctype="x-app_entity_field_label" equiv-text="&lt;/app-entity-field-label&gt;"/> : </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.html</context>
+          <context context-type="linenumber">32,40</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7054036729903021582" datatype="html">
+        <source>Counting all &quot;active&quot; records. If configured, you can view different disaggregations by using the arrows below.</source>
+        <target>Counting all &quot;active&quot; records. If configured, you can view different disaggregations by using the arrows below.</target>
+        <note priority="1" from="description">dashboard widget explanation</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.ts</context>
+          <context context-type="linenumber">126</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5982161170147334984" datatype="html">
+        <source> Progress Overview</source>
+        <target> Progress Overview</target>
+        <note priority="1" from="description">dashboard widget subtitle</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/dashboard-widgets/progress-dashboard-widget/progress-dashboard/progress-dashboard.component.ts</context>
+          <context context-type="linenumber">47</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2807559716241592762" datatype="html">
+        <source> Shows the progress of different parts of project tasks. You can use this to track any kind of targets.</source>
+        <target> Shows the progress of different parts of project tasks. You can use this to track any kind of targets.</target>
+        <note priority="1" from="description">dashboard widget explanation</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/dashboard-widgets/progress-dashboard-widget/progress-dashboard/progress-dashboard.component.ts</context>
+          <context context-type="linenumber">49</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1472120673711249850" datatype="html">
+        <source>Quick Actions</source>
+        <target>Quick Actions</target>
+        <note priority="1" from="description">dashboard widget subtitle</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/dashboard-widgets/shortcut-dashboard-widget/shortcut-dashboard/shortcut-dashboard.component.ts</context>
+          <context context-type="linenumber">48</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1731577319426847606" datatype="html">
+        <source>Shortcuts to quickly navigate to common actions</source>
+        <target>Shortcuts to quickly navigate to common actions</target>
+        <note priority="1" from="description">dashboard widget explanation</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/dashboard-widgets/shortcut-dashboard-widget/shortcut-dashboard/shortcut-dashboard.component.ts</context>
+          <context context-type="linenumber">50</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8899174649685550045" datatype="html">
+        <source>To accurately log your current address, please allow GPS access.</source>
+        <target>To accurately log your current address, please allow GPS access.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/location/address-gps-location/address-gps-location.component.html</context>
+          <context context-type="linenumber">4</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6648544332901682553" datatype="html">
+        <source>Failed to access device location. Please check if location permission is enabled in your device settings</source>
+        <target>Failed to access device location. Please check if location permission is enabled in your device settings</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/location/address-gps-location/address-gps-location.component.ts</context>
+          <context context-type="linenumber">54</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7845644545065231471" datatype="html">
+        <source>[selected coordinates: <x id="PH" equiv-text="coordinates.lat"/> - <x id="PH_1" equiv-text="coordinates.lon"/>]</source>
+        <target>[selected coordinates: <x id="PH" equiv-text="coordinates.lat"/> - <x id="PH_1" equiv-text="coordinates.lon"/>]</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/location/geo.service.ts</context>
+          <context context-type="linenumber">91</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4400789756391088642" datatype="html">
+        <source>Tasks that are beyond their deadline</source>
+        <target>Tasks that are beyond their deadline</target>
+        <note priority="1" from="description">dashboard widget explanation</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/todos/todos-dashboard/todos-dashboard.component.ts</context>
+          <context context-type="linenumber">40</context>
+        </context-group>
+      </trans-unit>
     </body>
   </file>
 </xliff>

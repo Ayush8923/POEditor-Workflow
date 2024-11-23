@@ -27,11 +27,11 @@ jobs:
         run: |
           declare -A files
           # Populate file mappings dynamically
-          # files["en"]="src/assets/locale/messages.en.xlf"
+          files["en"]="src/assets/locale/messages.xlf"
           # files["de"]="src/assets/locale/messages.de.xlf"
           # files["it"]="src/assets/locale/messages.it.xlf"
-
           files["fr"]="src/assets/locale/messages.fr.xlf"
+
           for lang in "${!files[@]}"; do
             echo "Uploading ${files[$lang]} for language $lang"
             response=$(curl -s -X POST https://api.poeditor.com/v2/projects/upload \
@@ -51,7 +51,7 @@ jobs:
 
       - name: Export translations from POEditor
         run: |
-          languages=("fr")
+          languages=("en")
           for lang in "${languages[@]}"; do
             echo "Exporting translations for language $lang"
             response=$(curl -s -X POST https://api.poeditor.com/v2/projects/export \
@@ -64,7 +64,11 @@ jobs:
               url=$(echo $response | jq -r '.result.url')
               if [ -n "$url" ]; then
                 echo "Downloading translations for $lang from $url"
-                curl -s -o src/assets/locale/messages.$lang.xlf $url
+                if [ "$lang" = "en" ]; then
+                  curl -s -o src/assets/locale/messages.xlf $url
+                else
+                  curl -s -o src/assets/locale/messages.$lang.xlf $url
+                fi
               else
                 echo "No URL found for downloading translations for $lang"
                 exit 1

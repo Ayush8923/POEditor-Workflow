@@ -148,4 +148,5 @@ jobs:
               repo,
               issue_number: result.data.number,
               labels: ['feature', 'automated pr'],
+              assignees: ['Ayush8923'],
             });

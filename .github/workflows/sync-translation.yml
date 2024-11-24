@@ -96,10 +96,10 @@ jobs:
             echo "Branch $branch_name already exists. Fetching it..."
             git fetch origin $branch_name:$branch_name
             echo "Committing local changes..."
+            git add src/assets/locale/*.xlf
+            git commit -m "Temporary commit for branch switch"
 
             git checkout $branch_name
-            git add src/assets/locale/*.xlf
-            git commit -m "Update translations from POEditor"
             git pull origin $branch_name
           else
             echo "Creating new branch $branch_name..."

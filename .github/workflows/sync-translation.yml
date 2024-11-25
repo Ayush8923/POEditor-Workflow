@@ -31,7 +31,7 @@ jobs:
 
       - name: Create or update branch for translations
         run: |
-          branch_name="update-translations-messages"
+          branch_name="update-translations-messagesv2"
 
           # Check if branch exists on remote
           if git ls-remote --exit-code origin $branch_name; then
@@ -124,7 +124,7 @@ jobs:
         with:
           script: |
             const { repo, owner } = context.repo;
-            const headBranch = 'update-translations-messages';
+            const headBranch = 'update-translations-messagesv2';
             const baseBranch = 'master';
 
             const pulls = await github.rest.pulls.list({
@@ -135,6 +135,7 @@ jobs:
               state: 'open',
             });
 
+            console.log(pulls.data);
             if (pulls.data.length < 1) {
               const diff = await github.rest.repos.compareCommits({
               owner,

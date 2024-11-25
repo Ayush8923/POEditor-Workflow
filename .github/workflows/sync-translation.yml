@@ -128,14 +128,14 @@ jobs:
             const baseBranch = 'master';
 
             const pulls = await github.rest.pulls.list({
-              owner: owner,
-              repo: repo,
-              head: headBranch,
-              base: baseBranch,
+              owner,
+              repo,
               state: 'open',
+              head: `${owner}:${headBranch}`,
             });
 
-            console.log(pulls.data);
+            console.log(pulls.data, "==> pulls.data");
+            console.log(pulls.data.length, "==> pulls.data.length");
             if (pulls.data.length < 1) {
               const diff = await github.rest.repos.compareCommits({
               owner,

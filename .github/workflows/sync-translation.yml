@@ -31,7 +31,7 @@ jobs:
 
       - name: Create or update branch for translations
         run: |
-          branch_name="chore/update-poeditor-translations"
+          branch_name="update-translations-messages"
 
           # Check if branch exists on remote
           if git ls-remote --exit-code origin $branch_name; then
@@ -124,7 +124,7 @@ jobs:
         with:
           script: |
             const { repo, owner } = context.repo;
-            const headBranch = 'chore/update-poeditor-translations';
+            const headBranch = 'update-translations-messages';
             const baseBranch = 'master';
 
             const pulls = await github.rest.pulls.list({
@@ -143,7 +143,6 @@ jobs:
               head: headBranch,
             });
             if (diff.data.commits.length === 0) {
-              console.log('No commits between head and base branches. Exiting.');
               return;
             }
             const result = await github.rest.pulls.create({

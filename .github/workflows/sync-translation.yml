@@ -11,7 +11,9 @@ permissions:
 
 jobs:
   sync-translations:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-
+    env:
+      BASE_BRANCH: "master"
 
     environment:
       name: staging
@@ -125,7 +127,7 @@ jobs:
           script: |
             const { repo, owner } = context.repo;
             const headBranch = 'update-translations-messagesv2';
-            const baseBranch = 'master';
+            const baseBranch = process.env.BASE_BRANCH;
 
             const pulls = await github.rest.pulls.list({
               owner,
